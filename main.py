@@ -2,10 +2,12 @@ from WhiteSnake.Loader import Dataset
 from utils.Visualization import CustomVisdom
 from config import Env
 from tqdm import tqdm
+import numpy
 import torch
 import torch.utils.data as Data
 
 options = Env()
+WORD_VEC = numpy.load(f'./WhiteSnake/word2vec.npy').tolist()
 
 def train(**kwargs):
     for k_, v_ in kwargs.items():
@@ -39,8 +41,8 @@ def train(**kwargs):
 
     for epoch in tqdm(range(options.epochs)):
         for index, (batchX, batchY) in enumerate(tqdm(loader)):
-            tqdm.write(str(batchX))
-            tqdm.write(str(batchY))            
+            tqdm.write(str(batchX.size()))
+            tqdm.write(str(batchY.size()))
             vis.text('progress', f'目前迭代進度:<br>epochs={epoch + 1}<br>batch={index + 1}')
 
 if __name__ == '__main__':
