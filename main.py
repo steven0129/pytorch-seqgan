@@ -14,7 +14,7 @@ def train(**kwargs):
     for k_, v_ in kwargs.items():
         setattr(options, k_, v_)
 
-    vis = CustomVisdom(name=f'SeqGAN', options=options)
+    vis = CustomVisdom(name='SeqGAN', options=options)
     whiteSnake = Dataset(ratio=options.ratio)
     print(f'收錄{len(whiteSnake)}個pair')
 
