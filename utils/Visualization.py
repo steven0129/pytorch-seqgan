@@ -2,10 +2,17 @@ import visdom
 import numpy as np
 
 class CustomVisdom(object):
-    def __init__(self, name='default', **kwargs):
+    def __init__(self, name='default', options=None, **kwargs):
         self.vis = visdom.Visdom(env=name, **kwargs)
         self.X = {}
         self.Y = {}
+
+        if options != None:
+            configSummary = ''
+            for key, value in options.__dict__.items():
+                if not key.startswith('__'): configSummary += str(key) + '=' + str(value) + '<br>'
+
+            self.text('config', f'{configSummary}')
     
     def text(self, id, content):
         try:
