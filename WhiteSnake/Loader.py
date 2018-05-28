@@ -16,14 +16,14 @@ class Dataset(data.Dataset):
         self.classes = numpy.load(f'{currentPath}/classes.npy').tolist()
 
     def __getitem__(self, index):
-        data1 = self.__spacesAlign(self.__maxLen(), self.data[index])
-        data2 = self.__spacesAlign(self.__maxLen(), self.data[index + 1])
+        data1 = self.__spacesAlign(self.maxLen(), self.data[index])
+        data2 = self.__spacesAlign(self.maxLen(), self.data[index + 1])
         return tuple(map(self.__data2ind, [data1, data2]))
 
     def __len__(self):
         return len(self.data) - 1
 
-    def __maxLen(self):
+    def maxLen(self):
         return max(self.lengths)
 
     def __spacesAlign(self, outLen, myStr):
@@ -32,7 +32,6 @@ class Dataset(data.Dataset):
     def __filterNewLine(self, data):
         data = list(filter(lambda x: x != 'n', list(data)))
         data = list(map(lambda x: x.replace('\\', '\\n'), list(data)))
-
         return data
 
     def __data2ind(self, data):
