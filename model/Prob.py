@@ -1,9 +1,8 @@
 from tqdm import tqdm
 from torch.nn import NLLLoss
 from config import Env
+from torch.autograd import Variable
 import torch
-
-options = Env()
 
 class MLE4GEN():
     def __init__(self, gen, dataLoader, vis=None, epochs=150):
@@ -13,17 +12,23 @@ class MLE4GEN():
         self.loader = dataLoader
         self.vis = vis
 
-    def train(self):
+    def train(self, gpu=False):
         for epoch in tqdm(range(self.epochs)):
-            total_loss = 0
+            avg_loss = 0
 
             for batchIdx, (batchX, batchY) in enumerate(tqdm(self.loader)):
-                batch_size, seq_len = batchX.size()
-                inp = batchX.permute(1, 0)      # seq_len * batch_size
-                target = batchY.permute(1, 0)   # seq_len * batch_size
+                batchX = Variable(batchX)
+                batchY = Variable(batchY)
 
-                # TODO: MLE model complete
-                
+                if gpu:
+                    batchX = batchX.cuda()
+                    batchY = batchY.cuda()
 
-            tqdm.write(f'Average NLL = {total_loss / options.batch_size}')
-            if self.vis != None: self.vis.text('progress', f'目前迭代進度:<br>epochs={epoch + 1}<br>batch={batchIdx + 1}')
+                self.gen_optim.zero_grad()
+                loss = self.gen.NLLLoss(batchX, batchY)
+                loss.backward()
+                self.gen_optim.step()
+                avg_loss += loss.data[0] / batchX.size()[0]
+                if self.vis != None: self.vis.text('progress', f'目前迭代進度:<br>epochs={epoch + 1}<br>batch={batchIdx + 1}')
+
+            self.vis.drawLine('loss', epoch + 1, avg_loss)
