@@ -31,4 +31,4 @@ class MLE4GEN():
                 avg_loss += loss.data[0] / batchX.size()[0]
                 if self.vis != None: self.vis.text('progress', f'目前迭代進度:<br>epochs={epoch + 1}<br>batch={batchIdx + 1}')
 
-            self.vis.drawLine('loss', epoch + 1, avg_loss)
+            if self.vis != None: self.vis.drawLine('loss', epoch + 1, avg_loss)
