@@ -2,18 +2,12 @@ import torch
 from tqdm import tqdm
 
 class TensorZip():
-    def fromDataset(dataset, gpu=False, vis=None, message=None):
-        if message != None: print(message)
-        X = [0] * len(dataset)
-        Y = [0] * len(dataset)
+    def __init__(self, dataset):
+        self.dataset = dataset
 
-        for i, (x, y) in enumerate(tqdm(dataset)):
-            X[i] = x
-            Y[i] = y
-            if vis != None:
-                vis.text('progress', f'目前資料輸入進度: {i + 1}/{len(dataset)}')
-        
-        
+    def fromDataset(self, gpu=False, vis=None, message=None):
+        if message != None: print(message)
+        X, Y = zip(*tqdm(self.dataset))
         X = torch.LongTensor(X)
         Y = torch.LongTensor(Y)
 

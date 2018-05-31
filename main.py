@@ -6,7 +6,7 @@ from utils.Visualization import CustomVisdom
 from utils.Tensor import TensorZip
 from config import Env
 from tqdm import tqdm
-from model.GAN import Generator
+from model.GAN import Generator, Discriminator
 from model.Prob import MLE4GEN
 
 options = Env()
@@ -22,7 +22,8 @@ def train(**kwargs):
     whiteSnake = Dataset(ratio=options.ratio)
     print(f'收錄{len(whiteSnake)}個pair')
 
-    X, Y = TensorZip.fromDataset(dataset=whiteSnake, gpu=options.use_gpu, vis=vis, message='將每對pair存入X和Y中')
+    tensorZip = TensorZip(dataset=whiteSnake)
+    X, Y = tensorZip.fromDataset(gpu=options.use_gpu, vis=vis, message='將每對pair存入X和Y中')
     dataset = Data.TensorDataset(X, Y)
     loader = Data.DataLoader(dataset=dataset, batch_size=options.batch_size, shuffle=options.shuffle, drop_last=True, num_workers=options.core)
 
