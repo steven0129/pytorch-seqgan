@@ -26,6 +26,12 @@ class Dataset(data.Dataset):
     def maxLen(self):
         return max(self.lengths)
 
+    def getStartSym(self):
+        return self.classes.index('<')
+
+    def getEndSym(self):
+        return self.classes.index('>')
+
     def __spacesAlign(self, outLen, myStr):
         return myStr + [' '] * (outLen - len(myStr))
 

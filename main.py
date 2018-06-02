@@ -28,10 +28,16 @@ def train(**kwargs):
     loader = Data.DataLoader(dataset=dataset, batch_size=options.batch_size, shuffle=options.shuffle, drop_last=True, num_workers=options.core)
 
     gen = Generator(options.g_emb_dim, options.g_hid_dim, len(whiteSnake.classes), whiteSnake.maxLen(), gpu=options.use_gpu)
-    if options.use_gpu: gen = gen.cuda()
+    dis = Discriminator(options.d_emb_dim, options.d_hid_dim, len(whiteSnake.classes), whiteSnake.maxLen(), gpu=options.use_gpu)
+    if options.use_gpu:
+        gen = gen.cuda()
+        dis = dis.cuda()
 
     mle = MLE4GEN(gen, loader, vis=vis)
-    mle.train(gpu=options.use_gpu)
+    mle.train(epochs=options.mle_epochs, gpu=options.use_gpu)
+
+    fakeSamples = gen.sample(100, whiteSnake.getStartSym())
+    
 
 if __name__ == '__main__':
     import fire

@@ -23,6 +23,26 @@ class Generator(nn.Module):
         out = self.out(out.view(-1, self.hidden_dim))           # batch_size * vocab_size
         out = F.log_softmax(out)
         return out, hidden
+    
+    def sample(self, num, start_symbol):
+        samples = torch.zeros(num, self.max_seq_len).long()
+        h = autograd.Variable(torch.zeros(1, num, self.hidden_dim))
+        inp = autograd.Variable(torch.LongTensor([start_symbol]*num))
+
+        if self.gpu:
+            h = h.cuda()
+            samples = samples.cuda()
+            inp = inp.cuda()
+
+        for i in range(self.max_seq_len):
+            out, h = self.forward(inp, h)               # out: num * vocab_size
+            out = torch.multinomial(torch.exp(out), 1)  # num * 1
+            for j in range(num):
+                samples[j, i] = out.data[j]
+            
+            inp = out.view(-1)
+
+        return samples
 
     def NLLLoss(self, inp, target):
         """
@@ -76,3 +96,6 @@ class Discriminator(nn.Module):
         out = self.hidden2out(out)                                 # batch_size * 1
         out = F.sigmoid(out)
         return out
+
+    def train(self, pos_samples, neg_samples, d_steps, epochs):
+        pass

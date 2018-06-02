@@ -5,15 +5,14 @@ from torch.autograd import Variable
 import torch
 
 class MLE4GEN():
-    def __init__(self, gen, dataLoader, vis=None, epochs=150):
+    def __init__(self, gen, dataLoader, vis=None):
         self.gen = gen
         self.gen_optim = torch.optim.Adam(gen.parameters(), lr=1e-2)
-        self.epochs = epochs
         self.loader = dataLoader
         self.vis = vis
 
-    def train(self, gpu=False):
-        for epoch in tqdm(range(self.epochs)):
+    def train(self, epochs=150, gpu=False):
+        for epoch in tqdm(range(epochs)):
             avg_loss = 0
 
             for batchIdx, (batchX, batchY) in enumerate(tqdm(self.loader)):
