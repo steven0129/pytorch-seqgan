@@ -1,5 +1,6 @@
 import torch
 import numpy
+import itertools
 import torch.utils.data as Data
 from WhiteSnake.Loader import Dataset
 from utils.Visualization import CustomVisdom
@@ -33,11 +34,14 @@ def train(**kwargs):
         gen = gen.cuda()
         dis = dis.cuda()
 
+    # MLE pre-training
     mle = MLE4GEN(gen, loader, vis=vis)
     mle.train(epochs=options.mle_epochs, gpu=options.use_gpu)
 
-    fakeSamples = gen.sample(100, whiteSnake.getStartSym())
-    
+    # Discriminator pre-training
+    loader = Data.DataLoader(dataset=dataset, batch_size=options.d_samples_num, shuffle=options.shuffle, drop_last=True, num_workers=options.core)
+    _, realSamples = next(iter(loader))
+    fakeSamples = gen.sample(options.d_samples_num, whiteSnake.getStartSym())
 
 if __name__ == '__main__':
     import fire
